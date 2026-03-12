@@ -24,9 +24,9 @@ refreshenv
 nvm install latest
 nvm use latest
 
-# Git identity – update these before running
-# git config --global user.email "you@example.com"
-# git config --global user.name "Your Name"
+# Git identity
+git config --global user.name "Jonas Nim Røssum"
+git config --global user.email "1959615+nimrossum@users.noreply.github.com"
 
 # Git aliases
 git config --global alias.rc "rebase --continue"

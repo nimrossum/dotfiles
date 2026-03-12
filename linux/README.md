@@ -1,4 +1,4 @@
-# Android (Termux) Setup
+# Linux Setup
 
 ## Quick Start
 
@@ -7,7 +7,7 @@
 Run the setup script directly:
 
 ```sh
-curl -sL https://raw.githubusercontent.com/nimrossum/dotfiles/refs/heads/main/android/setup.sh | sudo -E bash -
+curl -sL https://raw.githubusercontent.com/nimrossum/dotfiles/refs/heads/main/linux/setup.sh | sudo -E bash -
 ```
 
 ## What it installs

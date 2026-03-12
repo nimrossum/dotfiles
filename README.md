@@ -2,5 +2,5 @@
 
 ## Platforms
 
-- [Android (Termux)](android/README.md)
+- [Linux](linux/README.md)
 - [Windows](windows/README.md)

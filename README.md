@@ -1,7 +1,6 @@
 # dotfiles
 
-## Android
+## Platforms
 
-```sh
-curl -sL https://raw.githubusercontent.com/nimrossum/dotfiles/refs/heads/main/android.sh | sudo -E bash -
-```
+- [Linux](linux/README.md)
+- [Windows](windows/README.md)

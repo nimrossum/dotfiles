@@ -24,6 +24,9 @@ refreshenv
 nvm install latest
 nvm use latest
 
+# Bun
+powershell -c "irm bun.sh/install.ps1 | iex"
+
 # Git identity
 git config --global user.name "Jonas Nim Røssum"
 git config --global user.email "1959615+nimrossum@users.noreply.github.com"

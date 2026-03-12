@@ -30,6 +30,7 @@ Invoke-RestMethod https://raw.githubusercontent.com/nimrossum/dotfiles/refs/head
 | `rc`       | `rebase --continue`                  |
 | `ra`       | `rebase --abort`                     |
 | `ri`       | `rebase -i`                          |
+| `remain`   | `rebase -i --autosquash origin/main` |
 | `st`       | `status`                             |
 | `co`       | `checkout`                           |
 | `br`       | `branch`                             |

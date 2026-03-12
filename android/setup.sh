@@ -15,6 +15,7 @@ nvm install node
 git config --global alias.rc "rebase --continue"
 git config --global alias.ra "rebase --abort"
 git config --global alias.ri "rebase -i"
+git config --global alias.remain "rebase -i --autosquash origin/main"
 git config --global alias.st "status"
 git config --global alias.co "checkout"
 git config --global alias.br "branch"

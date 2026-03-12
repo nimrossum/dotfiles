@@ -17,3 +17,7 @@ git config --global alias.cp "cherry-pick"
 git config --global alias.lg "log --oneline --graph --decorate --all"
 git config --global alias.please "push --force-with-lease"
 git config --global alias.unstage "reset HEAD --"
+git config --global alias.pr "pull --rebase"
+
+# Git pull configuration
+git config --global pull.ff only

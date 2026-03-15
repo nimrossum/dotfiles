@@ -1,6 +1,4 @@
-# Git identity
-git config --global user.name "Jonas Nim Røssum"
-git config --global user.email "1959615+nimrossum@users.noreply.github.com"
+source "$(dirname "${BASH_SOURCE[0]}")/git-credentials.sh"
 
 # Git aliases
 git config --global alias.rc "rebase --continue"

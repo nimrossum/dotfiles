@@ -1,6 +1,4 @@
-# Git identity
-git config --global user.name "Jonas Nim Røssum"
-git config --global user.email "1959615+nimrossum@users.noreply.github.com"
+& "$PSScriptRoot\git-credentials.ps1"
 
 # Git aliases
 git config --global alias.rc "rebase --continue"

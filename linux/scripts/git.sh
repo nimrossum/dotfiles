@@ -1,5 +1,3 @@
-source "$(dirname "${BASH_SOURCE[0]}")/git-credentials.sh"
-
 # Git aliases
 git config --global alias.rc "rebase --continue"
 git config --global alias.ra "rebase --abort"

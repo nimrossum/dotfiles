@@ -1,5 +1,3 @@
-& "$PSScriptRoot\git-credentials.ps1"
-
 # Git aliases
 git config --global alias.rc "rebase --continue"
 git config --global alias.ra "rebase --abort"

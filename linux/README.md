@@ -17,6 +17,8 @@ curl -sL https://raw.githubusercontent.com/nimrossum/dotfiles/refs/heads/main/li
 - **nvm** – Node Version Manager
 - **node** – latest Node.js (via nvm)
 
+- **just** – command runner
+
 ## Git Aliases
 
 | Alias      | Command                              |

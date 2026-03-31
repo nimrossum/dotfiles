@@ -23,6 +23,8 @@ Invoke-RestMethod https://raw.githubusercontent.com/nimrossum/dotfiles/refs/head
 - **WizTree** – disk space analyser
 - **Google Drive**
 
+- **just** – command runner
+
 ## Git Aliases
 
 | Alias      | Command                              |

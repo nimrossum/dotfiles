@@ -9,6 +9,9 @@ choco upgrade googlechrome firefox
 # Development
 choco upgrade nvm vscode cascadiacode gh
 
+# just (command runner) https://github.com/casey/just
+choco install just
+
 # Git
 choco upgrade git --params "/WindowsTerminal /NoGuiHereIntegration /NoShellHereIntegration /NoGitLfs"
 

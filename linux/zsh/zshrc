@@ -1,0 +1,8 @@
+# Load PR number
+source "$HOME/dotfiles/linux/zsh/pr_prompt.sh"
+
+# Enable prompt substitution
+setopt PROMPT_SUBST
+
+# Prompt
+PROMPT='%n@%m:%~$(parse_pr) %# '

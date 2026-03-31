@@ -51,4 +51,55 @@ if ! command -v npx >/dev/null 2>&1; then
 fi
 
 echo "[dotfiles] Setup complete!"
+
+# Verification section
+echo
+echo "[dotfiles] Verifying setup..."
+
+verify_pass() { echo -e "[PASS] $1"; }
+verify_fail() { echo -e "[FAIL] $1"; }
+
+# Check commands
+for cmd in git gh nvm node npx just bun; do
+  if command -v "$cmd" >/dev/null 2>&1; then
+    verify_pass "$cmd installed"
+  else
+    verify_fail "$cmd missing"
+  fi
+done
+
+# Check dotfiles repo
+if [ -d "$DOTFILES_DIR/.git" ]; then
+  verify_pass "dotfiles repo present"
+  if git -C "$DOTFILES_DIR" status | grep -q 'up to date'; then
+    verify_pass "dotfiles repo up to date"
+  else
+    verify_fail "dotfiles repo not up to date"
+  fi
+else
+  verify_fail "dotfiles repo missing"
+fi
+
+# Check symlinks
+check_symlink() {
+  local link="$1"; local target="$2"
+  if [ -L "$link" ] && [ "$(readlink "$link")" = "$target" ]; then
+    verify_pass "$link symlinked to $target"
+  else
+    verify_fail "$link not symlinked to $target"
+  fi
+}
+check_symlink "$HOME/.zshrc" "$DOTFILES_DIR/linux/zsh/zshrc"
+check_symlink "$HOME/.config/pr_prompt.sh" "$DOTFILES_DIR/linux/zsh/pr_prompt.sh"
+check_symlink "$HOME/.gitconfig" "$DOTFILES_DIR/git/gitconfig"
+
+# Check PR prompt script is executable
+if [ -x "$DOTFILES_DIR/linux/zsh/pr_prompt.sh" ]; then
+  verify_pass "pr_prompt.sh is executable"
+else
+  verify_fail "pr_prompt.sh is not executable"
+fi
+
+echo
+echo "[dotfiles] Verification complete."
 npx -y cowsay "All done!"

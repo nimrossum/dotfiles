@@ -46,10 +46,47 @@ refreshenv
 & "$ScriptDir\scripts\git-credentials.ps1"
 & "$ScriptDir\scripts\git.ps1"
 
-# Check for npx (Node.js) before using cowsay
-if (-not (Get-Command npx -ErrorAction SilentlyContinue)) {
-    Write-Host "[dotfiles] Node.js (npx) not found after install. Please check nvm installation."
+
+# Verification section
+Write-Host "\n[dotfiles] Verifying setup..."
+
+function Verify-Pass($msg) { Write-Host "[PASS] $msg" -ForegroundColor Green }
+function Verify-Fail($msg) { Write-Host "[FAIL] $msg" -ForegroundColor Red }
+
+# Check commands
+$commands = @('git','gh','nvm','node','npx','just','bun')
+foreach ($cmd in $commands) {
+    if (Get-Command $cmd -ErrorAction SilentlyContinue) {
+        Verify-Pass "$cmd installed"
+    } else {
+        Verify-Fail "$cmd missing"
+    }
+}
+
+# Check dotfiles repo
+if (Test-Path "$dotfiles\.git") {
+    Verify-Pass "dotfiles repo present"
+    $status = git -C $dotfiles status 2>$null
+    if ($status -match 'up to date' -or $status -match 'nothing to commit') {
+        Verify-Pass "dotfiles repo up to date"
+    } else {
+        Verify-Fail "dotfiles repo not up to date"
+    }
 } else {
-    Write-Host "[dotfiles] Setup complete!"
+    Verify-Fail "dotfiles repo missing"
+}
+
+# Check symlink or file for profile
+if ((Test-Path $PROFILE) -and ((Get-Item $PROFILE).LinkType -eq 'SymbolicLink' -or (Test-Path $PROFILE))) {
+    Verify-Pass "PowerShell profile present"
+} else {
+    Verify-Fail "PowerShell profile missing"
+}
+
+Write-Host "\n[dotfiles] Verification complete."
+
+if (Get-Command npx -ErrorAction SilentlyContinue) {
     npx -y cowsay "All done!"
+} else {
+    Write-Host "[dotfiles] Node.js (npx) not found after install. Please check nvm installation."
 }

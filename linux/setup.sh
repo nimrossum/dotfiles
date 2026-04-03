@@ -1,6 +1,24 @@
 #!/usr/bin/env bash
 set -e
 
+# Warn if running as root; dotfiles should be set up for the target user, not root.
+if [ "${EUID:-$(id -u)}" -eq 0 ]; then
+  echo "[dotfiles] WARNING: Running as root. Dotfiles will be created under root's HOME ($HOME)."
+  echo "[dotfiles] If you meant to set up dotfiles for a regular user, run without sudo:"
+  echo "[dotfiles]   curl -sL https://raw.githubusercontent.com/nimrossum/dotfiles/refs/heads/main/linux/setup.sh | bash"
+  # If invoked via sudo, prefer the original user's home directory.
+  if [ -n "${SUDO_USER:-}" ]; then
+    _sudo_home="$(getent passwd "$SUDO_USER" | cut -d: -f6)"
+    if [ -n "$_sudo_home" ]; then
+      HOME="$_sudo_home"
+      echo "[dotfiles] Using home directory of '$SUDO_USER': $HOME"
+    else
+      echo "[dotfiles] WARNING: Could not resolve home directory for '$SUDO_USER'; using $HOME."
+    fi
+    unset _sudo_home
+  fi
+fi
+
 DOTFILES_DIR="$HOME/dotfiles"
 DOTFILES_REPO="https://github.com/nimrossum/dotfiles.git"
 

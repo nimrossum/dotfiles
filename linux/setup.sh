@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-npx -y cowsay "All done!"
-
 set -e
 
 DOTFILES_DIR="$HOME/dotfiles"

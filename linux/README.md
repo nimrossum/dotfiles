@@ -7,8 +7,10 @@
 Run the setup script directly:
 
 ```sh
-curl -sL https://raw.githubusercontent.com/nimrossum/dotfiles/refs/heads/main/linux/setup.sh | sudo -E bash -
+curl -sL https://raw.githubusercontent.com/nimrossum/dotfiles/refs/heads/main/linux/setup.sh | bash
 ```
+
+> **Note:** Run as your regular user — **no** `sudo` needed for the one-liner. The script will prompt for `sudo` automatically when elevated privileges are needed (e.g. for `apt install`).
 
 ## What it installs
 

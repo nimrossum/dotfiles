@@ -24,15 +24,13 @@ ln -sf "$DOTFILES_DIR/linux/zsh/zshrc" "$HOME/.zshrc"
 ln -sf "$DOTFILES_DIR/linux/zsh/pr_prompt.sh" "$HOME/.config/pr_prompt.sh"
 ln -sf "$DOTFILES_DIR/git/gitconfig" "$HOME/.gitconfig"
 # Optionally symlink .bashrc if desired
-# ln -sf "$DOTFILES_DIR/linux/bash/bashrc" "$HOME/.bashrc"
-
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ln -sf "$DOTFILES_DIR/linux/bash/bashrc" "$HOME/.bashrc"
 
 echo "[dotfiles] Running package installation scripts..."
-source "$SCRIPT_DIR/scripts/packages.sh"
-source "$SCRIPT_DIR/scripts/node.sh"
-source "$SCRIPT_DIR/scripts/git-credentials.sh"
-source "$SCRIPT_DIR/scripts/git.sh"
+source "$DOTFILES_DIR/linux/scripts/packages.sh"
+source "$DOTFILES_DIR/linux/scripts/node.sh"
+source "$DOTFILES_DIR/linux/scripts/git-credentials.sh"
+source "$DOTFILES_DIR/linux/scripts/git.sh"
 
 # Check for gh (GitHub CLI) for PR prompt integration
 if ! command -v gh >/dev/null 2>&1; then

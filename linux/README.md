@@ -7,7 +7,7 @@
 Run the setup script directly:
 
 ```sh
-curl -sL https://raw.githubusercontent.com/nimrossum/dotfiles/refs/heads/main/linux/setup.sh | sudo -E bash -
+curl -sL https://raw.githubusercontent.com/nimrossum/dotfiles/refs/heads/main/linux/setup.sh | bash -
 ```
 
 ## What it installs

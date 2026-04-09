@@ -14,11 +14,18 @@ curl -sL https://raw.githubusercontent.com/nimrossum/dotfiles/refs/heads/main/li
 
 - **unzip** – archive utility
 - **libatomic1** – runtime dependency required by some Node.js builds
+- **zsh** – shell used by the dotfiles prompt/config
 - **bun** – fast JavaScript runtime & package manager
 - **nvm** – Node Version Manager
 - **node** – latest Node.js (via nvm)
 
 - **just** – command runner
+
+## Shell behavior
+
+- Setup installs `zsh` and tries to set it as your default login shell via `chsh`.
+- Setup starts `zsh` automatically at the end when run in an interactive terminal.
+- If needed, you can still switch manually with `exec zsh`.
 
 ## Git Aliases
 

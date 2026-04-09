@@ -39,6 +39,40 @@ verify_fail() {
   printf '%b[FAIL]%b %s\n' "$C_FAIL" "$C_RESET" "$1"
 }
 
+ensure_zsh_default_shell() {
+  if ! command_exists zsh; then
+    log "Installing zsh..."
+    if command_exists apt-get; then
+      sudo apt-get update
+      sudo apt-get install -y zsh
+    elif command_exists apt; then
+      sudo apt update
+      sudo apt install -y zsh
+    else
+      log "No apt-based package manager found. Install zsh manually."
+      return
+    fi
+  fi
+
+  local zsh_path
+  local current_shell
+  zsh_path="$(command -v zsh)"
+  current_shell="$(getent passwd "$USER" | cut -d: -f7)"
+
+  if [ -n "$zsh_path" ] && [ "$current_shell" != "$zsh_path" ]; then
+    log "Setting default login shell to $zsh_path..."
+    if command_exists chsh; then
+      if chsh -s "$zsh_path" "$USER"; then
+        log "Default login shell updated to zsh."
+      else
+        log "Could not change default shell automatically. Run: chsh -s $zsh_path"
+      fi
+    else
+      log "chsh not available. Run manually: chsh -s $zsh_path"
+    fi
+  fi
+}
+
 ensure_libatomic_runtime() {
   if command_exists ldconfig && ldconfig -p 2>/dev/null | grep -q 'libatomic\.so\.1'; then
     return
@@ -86,6 +120,7 @@ section "Installing packages"
 source "$DOTFILES_DIR/linux/scripts/packages.sh"
 ensure_libatomic_runtime
 source "$DOTFILES_DIR/linux/scripts/node.sh"
+ensure_zsh_default_shell
 
 # Check for gh (GitHub CLI) for PR prompt integration
 if ! command_exists gh; then
@@ -103,7 +138,7 @@ fi
 
 section "Verifying setup"
 
-for cmd in git gh nvm node npx just bun; do
+for cmd in git gh nvm node npx just bun zsh; do
   if command_exists "$cmd"; then
     verify_pass "$cmd installed"
   else
@@ -137,6 +172,18 @@ check_symlink "$HOME/.config/pr_prompt.sh" "$DOTFILES_DIR/linux/zsh/pr_prompt.sh
 check_symlink "$HOME/.gitconfig" "$DOTFILES_DIR/git/gitconfig"
 check_symlink "$HOME/.bashrc" "$DOTFILES_DIR/linux/bash/bashrc"
 
+if command_exists zsh; then
+  zsh_path="$(command -v zsh)"
+  login_shell="$(getent passwd "$USER" | cut -d: -f7)"
+  if [ "$login_shell" = "$zsh_path" ]; then
+    verify_pass "default shell is zsh"
+  else
+    verify_fail "default shell is not zsh"
+  fi
+else
+  verify_fail "zsh missing; cannot verify default shell"
+fi
+
 # Check PR prompt script is executable
 if [ -x "$DOTFILES_DIR/linux/zsh/pr_prompt.sh" ]; then
   verify_pass "pr_prompt.sh is executable"
@@ -161,5 +208,14 @@ fi
 
 echo
 log "Next steps:"
-echo "  - Open a new terminal, or run: source ~/.bashrc"
+echo "  - Open a new terminal"
+echo "  - Or switch now in this shell: exec zsh"
 echo "  - Run 'gh auth login' if this is a new machine"
+
+if [ -t 1 ] && command_exists zsh; then
+  current_shell_name="$(ps -p $$ -o comm= 2>/dev/null | tr -d '[:space:]')"
+  if [ "$current_shell_name" != "zsh" ]; then
+    log "Starting zsh for this session..."
+    exec zsh -l
+  fi
+fi

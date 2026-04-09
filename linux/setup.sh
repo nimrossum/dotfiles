@@ -65,10 +65,10 @@ done
 # Check dotfiles repo
 if [ -d "$DOTFILES_DIR/.git" ]; then
   verify_pass "dotfiles repo present"
-  if git -C "$DOTFILES_DIR" status | grep -q 'up to date'; then
-    verify_pass "dotfiles repo up to date"
+  if [ -z "$(git -C "$DOTFILES_DIR" status --porcelain 2>/dev/null)" ]; then
+    verify_pass "dotfiles repo working tree clean"
   else
-    verify_fail "dotfiles repo not up to date"
+    verify_fail "dotfiles repo has local changes"
   fi
 else
   verify_fail "dotfiles repo missing"
@@ -96,4 +96,9 @@ fi
 
 echo
 echo "[dotfiles] Verification complete."
-npx -y cowsay "All done!"
+
+if command -v npx >/dev/null 2>&1; then
+  npx -y cowsay "All done!"
+else
+  echo "[dotfiles] Node.js (npx) not found after install. Please check nvm installation."
+fi

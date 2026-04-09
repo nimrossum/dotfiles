@@ -1,4 +1,3 @@
-npx -y cowsay "All done!"
 # Windows PowerShell setup
 Write-Host "[dotfiles] Checking for Chocolatey..."
 if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
@@ -17,7 +16,11 @@ if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
 $dotfiles = "$env:USERPROFILE\dotfiles"
 
 Write-Host "[dotfiles] Cloning or updating dotfiles repository..."
-if (-not (Test-Path $dotfiles)) {
+if (-not (Test-Path "$dotfiles\.git")) {
+    if (Test-Path $dotfiles) {
+        Write-Host "[dotfiles] Existing folder found at $dotfiles but it is not a git repository."
+        exit 1
+    }
     git clone https://github.com/nimrossum/dotfiles.git $dotfiles
 } else {
     git -C $dotfiles pull
@@ -40,7 +43,11 @@ Write-Host "[dotfiles] Running package installation scripts..."
 & "$ScriptDir\scripts\packages.ps1"
 
 # Ensure environment is refreshed so nvm/npx are available
-refreshenv
+if (Get-Command refreshenv -ErrorAction SilentlyContinue) {
+    refreshenv
+} else {
+    Write-Host "[dotfiles] refreshenv not available; continuing with current session environment."
+}
 
 # Verification section
 Write-Host "\n[dotfiles] Verifying setup..."
@@ -61,11 +68,11 @@ foreach ($cmd in $commands) {
 # Check dotfiles repo
 if (Test-Path "$dotfiles\.git") {
     Verify-Pass "dotfiles repo present"
-    $status = git -C $dotfiles status 2>$null
-    if ($status -match 'up to date' -or $status -match 'nothing to commit') {
-        Verify-Pass "dotfiles repo up to date"
+    $status = git -C $dotfiles status --porcelain 2>$null
+    if (-not $status) {
+        Verify-Pass "dotfiles repo working tree clean"
     } else {
-        Verify-Fail "dotfiles repo not up to date"
+        Verify-Fail "dotfiles repo has local changes"
     }
 } else {
     Verify-Fail "dotfiles repo missing"

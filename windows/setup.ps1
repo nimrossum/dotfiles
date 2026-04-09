@@ -7,13 +7,67 @@ function Write-Section($message) {
     Write-Host "[dotfiles] $message" -ForegroundColor Magenta
 }
 
+function Test-IsAdministrator {
+    $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
+    $principal = [Security.Principal.WindowsPrincipal]::new($identity)
+    return $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+}
+
+function Invoke-ElevatedPowerShellCommand {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Command,
+        [Parameter(Mandatory = $true)]
+        [string]$Description
+    )
+
+    Write-Step "$Description requires administrator privileges. Requesting elevation..."
+    $proc = Start-Process -FilePath "powershell.exe" -Verb RunAs -Wait -PassThru -ArgumentList @(
+        '-NoProfile',
+        '-ExecutionPolicy', 'Bypass',
+        '-Command', $Command
+    )
+
+    if ($proc.ExitCode -ne 0) {
+        throw "$Description failed with exit code $($proc.ExitCode)."
+    }
+}
+
+function Invoke-ElevatedPowerShellFile {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$FilePath,
+        [Parameter(Mandatory = $true)]
+        [string]$Description
+    )
+
+    Write-Step "$Description requires administrator privileges. Requesting elevation..."
+    $proc = Start-Process -FilePath "powershell.exe" -Verb RunAs -Wait -PassThru -ArgumentList @(
+        '-NoProfile',
+        '-ExecutionPolicy', 'Bypass',
+        '-File', $FilePath
+    )
+
+    if ($proc.ExitCode -ne 0) {
+        throw "$Description failed with exit code $($proc.ExitCode)."
+    }
+}
+
 Write-Section "Starting Windows setup"
 Write-Step "Checking for Chocolatey..."
 if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
     Write-Step "Installing Chocolatey..."
-    Set-ExecutionPolicy Bypass -Scope Process -Force
-    [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
-    iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+    $chocoInstallCommand = @"
+Set-ExecutionPolicy Bypass -Scope Process -Force
+[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+"@
+
+    if (Test-IsAdministrator) {
+        Invoke-Expression $chocoInstallCommand
+    } else {
+        Invoke-ElevatedPowerShellCommand -Command $chocoInstallCommand -Description "Chocolatey installation"
+    }
 }
 
 Write-Step "Checking for git..."
@@ -47,7 +101,12 @@ try {
 }
 
 Write-Section "Installing packages"
-& "$dotfiles\windows\scripts\packages.ps1"
+$packagesScript = Join-Path $dotfiles "windows\scripts\packages.ps1"
+if (Test-IsAdministrator) {
+    & $packagesScript
+} else {
+    Invoke-ElevatedPowerShellFile -FilePath $packagesScript -Description "Package installation"
+}
 
 # Ensure environment is refreshed so nvm/npx are available
 if (Get-Command refreshenv -ErrorAction SilentlyContinue) {

@@ -4,7 +4,7 @@
 
 > **Tip:** inspect the script before running it — download it first, review it, then execute.
 
-Run the setup script in an **elevated PowerShell** session:
+Run the setup script in PowerShell (admin-required steps will trigger a UAC prompt):
 
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force

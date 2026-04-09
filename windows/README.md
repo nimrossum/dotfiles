@@ -8,7 +8,9 @@ Run the setup script in an **elevated PowerShell** session:
 
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force
-Invoke-RestMethod https://raw.githubusercontent.com/nimrossum/dotfiles/refs/heads/main/windows/setup.ps1 | Invoke-Expression
+$setupScript = Join-Path $env:TEMP "dotfiles-setup.ps1"
+Invoke-WebRequest "https://raw.githubusercontent.com/nimrossum/dotfiles/refs/heads/main/windows/setup.ps1" -OutFile $setupScript
+& $setupScript
 ```
 
 ## What it installs

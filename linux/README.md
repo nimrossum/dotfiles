@@ -13,6 +13,7 @@ curl -sL https://raw.githubusercontent.com/nimrossum/dotfiles/refs/heads/main/li
 ## What it installs
 
 - **unzip** – archive utility
+- **libatomic1** – runtime dependency required by some Node.js builds
 - **bun** – fast JavaScript runtime & package manager
 - **nvm** – Node Version Manager
 - **node** – latest Node.js (via nvm)

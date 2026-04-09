@@ -46,10 +46,8 @@ try {
     Copy-Item -Force "$dotfiles\windows\powershell\profile.ps1" $PROFILE
 }
 
-$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-
 Write-Section "Installing packages"
-& "$ScriptDir\scripts\packages.ps1"
+& "$dotfiles\windows\scripts\packages.ps1"
 
 # Ensure environment is refreshed so nvm/npx are available
 if (Get-Command refreshenv -ErrorAction SilentlyContinue) {

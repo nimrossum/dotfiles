@@ -39,6 +39,23 @@ verify_fail() {
   printf '%b[FAIL]%b %s\n' "$C_FAIL" "$C_RESET" "$1"
 }
 
+ensure_libatomic_runtime() {
+  if command_exists ldconfig && ldconfig -p 2>/dev/null | grep -q 'libatomic\.so\.1'; then
+    return
+  fi
+
+  log "libatomic.so.1 not found. Installing runtime dependency..."
+  if command_exists apt-get; then
+    sudo apt-get update
+    sudo apt-get install -y libatomic1
+  elif command_exists apt; then
+    sudo apt update
+    sudo apt install -y libatomic1
+  else
+    log "No apt-based package manager found. Install libatomic manually for Node.js."
+  fi
+}
+
 section "Starting Linux setup"
 
 log "Checking for git..."
@@ -67,6 +84,7 @@ log "Open a new terminal or run 'source ~/.bashrc' to load shell changes."
 
 section "Installing packages"
 source "$DOTFILES_DIR/linux/scripts/packages.sh"
+ensure_libatomic_runtime
 source "$DOTFILES_DIR/linux/scripts/node.sh"
 
 # Check for gh (GitHub CLI) for PR prompt integration
@@ -127,6 +145,13 @@ else
 fi
 
 section "Setup complete"
+
+if command_exists node; then
+  if ! node --version >/dev/null 2>&1; then
+    log "Node is installed but cannot start. Re-checking runtime dependencies..."
+    ensure_libatomic_runtime
+  fi
+fi
 
 if command_exists npx; then
   npx -y cowsay "All done!"

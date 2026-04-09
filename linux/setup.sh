@@ -120,6 +120,13 @@ section "Installing packages"
 source "$DOTFILES_DIR/linux/scripts/packages.sh"
 ensure_libatomic_runtime
 source "$DOTFILES_DIR/linux/scripts/node.sh"
+
+# Ensure Bun is visible to this process before verification checks.
+export BUN_INSTALL="$HOME/.bun"
+if [ -d "$BUN_INSTALL/bin" ]; then
+  export PATH="$BUN_INSTALL/bin:$PATH"
+fi
+
 ensure_zsh_default_shell
 
 # Check for gh (GitHub CLI) for PR prompt integration

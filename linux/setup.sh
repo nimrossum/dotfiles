@@ -4,21 +4,58 @@ set -e
 DOTFILES_DIR="$HOME/dotfiles"
 DOTFILES_REPO="https://github.com/nimrossum/dotfiles.git"
 
-echo "[dotfiles] Checking for git..."
-if ! command -v git >/dev/null 2>&1; then
-  echo "[dotfiles] Installing git..."
+if [ -t 1 ]; then
+  C_RESET='\033[0m'
+  C_HEADER='\033[1;36m'
+  C_INFO='\033[0;34m'
+  C_PASS='\033[0;32m'
+  C_FAIL='\033[0;31m'
+else
+  C_RESET=''
+  C_HEADER=''
+  C_INFO=''
+  C_PASS=''
+  C_FAIL=''
+fi
+
+log() {
+  printf '%b[dotfiles]%b %s\n' "$C_INFO" "$C_RESET" "$1"
+}
+
+section() {
+  echo
+  printf '%b[dotfiles] %s%b\n' "$C_HEADER" "$1" "$C_RESET"
+}
+
+command_exists() {
+  command -v "$1" >/dev/null 2>&1
+}
+
+verify_pass() {
+  printf '%b[PASS]%b %s\n' "$C_PASS" "$C_RESET" "$1"
+}
+
+verify_fail() {
+  printf '%b[FAIL]%b %s\n' "$C_FAIL" "$C_RESET" "$1"
+}
+
+section "Starting Linux setup"
+
+log "Checking for git..."
+if ! command_exists git; then
+  log "Installing git..."
   sudo apt update
   sudo apt install -y git
 fi
 
-echo "[dotfiles] Cloning or updating dotfiles repository..."
+log "Cloning or updating dotfiles repository..."
 if [ ! -d "$DOTFILES_DIR/.git" ]; then
   git clone "$DOTFILES_REPO" "$DOTFILES_DIR"
 else
   git -C "$DOTFILES_DIR" pull
 fi
 
-echo "[dotfiles] Creating symlinks..."
+section "Creating symlinks"
 mkdir -p "$HOME/.config"
 ln -sf "$DOTFILES_DIR/linux/zsh/zshrc" "$HOME/.zshrc"
 ln -sf "$DOTFILES_DIR/linux/zsh/pr_prompt.sh" "$HOME/.config/pr_prompt.sh"
@@ -26,38 +63,30 @@ ln -sf "$DOTFILES_DIR/git/gitconfig" "$HOME/.gitconfig"
 # Optionally symlink .bashrc if desired
 ln -sf "$DOTFILES_DIR/linux/bash/bashrc" "$HOME/.bashrc"
 
-echo "[dotfiles] Open a new terminal or run 'source ~/.bashrc' to load shell changes."
+log "Open a new terminal or run 'source ~/.bashrc' to load shell changes."
 
-echo "[dotfiles] Running package installation scripts..."
+section "Installing packages"
 source "$DOTFILES_DIR/linux/scripts/packages.sh"
 source "$DOTFILES_DIR/linux/scripts/node.sh"
 
 # Check for gh (GitHub CLI) for PR prompt integration
-if ! command -v gh >/dev/null 2>&1; then
-  echo "[dotfiles] Installing GitHub CLI (gh)..."
+if ! command_exists gh; then
+  log "Installing GitHub CLI (gh)..."
   sudo apt install -y gh
 fi
 
 # Check for npx (Node.js) before using cowsay
-if ! command -v npx >/dev/null 2>&1; then
-  echo "[dotfiles] Installing Node.js (for npx)..."
+if ! command_exists npx; then
+  log "Installing Node.js (for npx)..."
   export NVM_DIR="$HOME/.nvm"
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
   nvm install node
 fi
 
-echo "[dotfiles] Setup complete!"
+section "Verifying setup"
 
-# Verification section
-echo
-echo "[dotfiles] Verifying setup..."
-
-verify_pass() { echo -e "[PASS] $1"; }
-verify_fail() { echo -e "[FAIL] $1"; }
-
-# Check commands
 for cmd in git gh nvm node npx just bun; do
-  if command -v "$cmd" >/dev/null 2>&1; then
+  if command_exists "$cmd"; then
     verify_pass "$cmd installed"
   else
     verify_fail "$cmd missing"
@@ -88,6 +117,7 @@ check_symlink() {
 check_symlink "$HOME/.zshrc" "$DOTFILES_DIR/linux/zsh/zshrc"
 check_symlink "$HOME/.config/pr_prompt.sh" "$DOTFILES_DIR/linux/zsh/pr_prompt.sh"
 check_symlink "$HOME/.gitconfig" "$DOTFILES_DIR/git/gitconfig"
+check_symlink "$HOME/.bashrc" "$DOTFILES_DIR/linux/bash/bashrc"
 
 # Check PR prompt script is executable
 if [ -x "$DOTFILES_DIR/linux/zsh/pr_prompt.sh" ]; then
@@ -96,11 +126,15 @@ else
   verify_fail "pr_prompt.sh is not executable"
 fi
 
-echo
-echo "[dotfiles] Verification complete."
+section "Setup complete"
 
-if command -v npx >/dev/null 2>&1; then
+if command_exists npx; then
   npx -y cowsay "All done!"
 else
-  echo "[dotfiles] Node.js (npx) not found after install. Please check nvm installation."
+  log "Node.js (npx) not found after install. Please check nvm installation."
 fi
+
+echo
+log "Next steps:"
+echo "  - Open a new terminal, or run: source ~/.bashrc"
+echo "  - Run 'gh auth login' if this is a new machine"

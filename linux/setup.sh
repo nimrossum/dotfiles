@@ -138,7 +138,7 @@ fi
 
 section "Verifying setup"
 
-for cmd in git gh nvm node npx just bun zsh; do
+for cmd in git gh nvm node npx just bun zsh neofetch; do
   if command_exists "$cmd"; then
     verify_pass "$cmd installed"
   else

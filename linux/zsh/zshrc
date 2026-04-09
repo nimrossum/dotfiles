@@ -1,8 +1,25 @@
-# Load PR number
-source "$HOME/dotfiles/linux/zsh/pr_prompt.sh"
+# Load prompt helpers
+if [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/pr_prompt.sh" ]; then
+	source "${XDG_CONFIG_HOME:-$HOME/.config}/pr_prompt.sh"
+else
+	source "$HOME/dotfiles/linux/zsh/pr_prompt.sh"
+fi
 
 # Enable prompt substitution
 setopt PROMPT_SUBST
 
+# History settings (required for Ctrl+R reverse search to be useful)
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=50000
+SAVEHIST=50000
+setopt APPEND_HISTORY
+setopt INC_APPEND_HISTORY
+setopt SHARE_HISTORY
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_SPACE
+setopt HIST_REDUCE_BLANKS
+
 # Prompt
-PROMPT='%n@%m:%~$(parse_pr) %# '
+PROMPT='%F{245}%~%f %F{magenta}$(parse_git)%f %F{cyan}$(parse_pr)%f %F{244}$(parse_git_status)%f
+%(?.%F{green}λ.%F{red}λ)%f '
+

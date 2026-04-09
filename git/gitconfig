@@ -1,0 +1,22 @@
+[user]
+	name = Jonas Nim Røssum
+	email = 1959615+nimrossum@users.noreply.github.com
+[alias]
+	rc = rebase --continue
+	ra = rebase --abort
+	ri = rebase -i
+	remain = rebase -i --autosquash origin/main
+	st = status
+	co = checkout
+	br = branch
+	cm = commit -m
+	ca = commit --amend
+	amend = commit --amend --no-edit
+	cp = cherry-pick
+	lg = log --oneline --graph --decorate --all
+	please = push --force-with-lease
+	unstage = reset HEAD --
+	pr = pull --rebase
+[pull]
+	ff = only
+

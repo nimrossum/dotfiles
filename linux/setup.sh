@@ -29,8 +29,6 @@ ln -sf "$DOTFILES_DIR/linux/bash/bashrc" "$HOME/.bashrc"
 echo "[dotfiles] Running package installation scripts..."
 source "$DOTFILES_DIR/linux/scripts/packages.sh"
 source "$DOTFILES_DIR/linux/scripts/node.sh"
-source "$DOTFILES_DIR/linux/scripts/git-credentials.sh"
-source "$DOTFILES_DIR/linux/scripts/git.sh"
 
 # Check for gh (GitHub CLI) for PR prompt integration
 if ! command -v gh >/dev/null 2>&1; then

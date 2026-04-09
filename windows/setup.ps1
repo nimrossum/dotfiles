@@ -42,11 +42,6 @@ Write-Host "[dotfiles] Running package installation scripts..."
 # Ensure environment is refreshed so nvm/npx are available
 refreshenv
 
-& "$ScriptDir\scripts\node.ps1"
-& "$ScriptDir\scripts\git-credentials.ps1"
-& "$ScriptDir\scripts\git.ps1"
-
-
 # Verification section
 Write-Host "\n[dotfiles] Verifying setup..."
 

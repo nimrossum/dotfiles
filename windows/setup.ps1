@@ -65,7 +65,7 @@ function Verify-Pass($msg) { Write-Host "[PASS] $msg" -ForegroundColor Green }
 function Verify-Fail($msg) { Write-Host "[FAIL] $msg" -ForegroundColor Red }
 
 # Check commands
-$commands = @('git','gh','nvm','node','npx','just','bun')
+$commands = @('git','gh','pwsh','nvm','node','npx','just','bun')
 foreach ($cmd in $commands) {
     if (Get-Command $cmd -ErrorAction SilentlyContinue) {
         Verify-Pass "$cmd installed"

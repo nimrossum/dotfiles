@@ -9,6 +9,9 @@ choco upgrade googlechrome firefox
 # Development
 choco upgrade nvm vscode cascadiacode gh
 
+# PowerShell
+choco upgrade powershell-core
+
 # just (command runner) https://github.com/casey/just
 choco upgrade just
 

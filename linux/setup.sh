@@ -26,6 +26,8 @@ ln -sf "$DOTFILES_DIR/git/gitconfig" "$HOME/.gitconfig"
 # Optionally symlink .bashrc if desired
 ln -sf "$DOTFILES_DIR/linux/bash/bashrc" "$HOME/.bashrc"
 
+echo "[dotfiles] Open a new terminal or run 'source ~/.bashrc' to load shell changes."
+
 echo "[dotfiles] Running package installation scripts..."
 source "$DOTFILES_DIR/linux/scripts/packages.sh"
 source "$DOTFILES_DIR/linux/scripts/node.sh"

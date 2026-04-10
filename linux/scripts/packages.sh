@@ -3,3 +3,6 @@ sudo apt install -y unzip git curl tar libatomic1 neofetch
 
 # Install `just` (command runner) https://github.com/casey/just
 sudo apt install -y just
+
+# GitHub Copilot CLI
+curl -fsSL https://gh.io/copilot-install | bash

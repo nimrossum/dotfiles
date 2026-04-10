@@ -90,6 +90,85 @@ ensure_libatomic_runtime() {
   fi
 }
 
+ensure_openssh_client() {
+  if command_exists ssh && command_exists ssh-keygen; then
+    return
+  fi
+
+  log "Installing OpenSSH client..."
+  if command_exists apt-get; then
+    sudo apt-get update
+    sudo apt-get install -y openssh-client
+  elif command_exists apt; then
+    sudo apt update
+    sudo apt install -y openssh-client
+  else
+    log "No apt-based package manager found. Install openssh-client manually."
+  fi
+}
+
+ensure_github_ssh_access() {
+  local ssh_key
+  local ssh_pub_key
+  local pub_key_material
+  local key_title
+  local current_origin
+  local desired_origin
+
+  ssh_key="$HOME/.ssh/id_ed25519"
+  ssh_pub_key="$ssh_key.pub"
+  desired_origin="git@github.com:nimrossum/dotfiles.git"
+
+  ensure_openssh_client
+
+  if ! command_exists ssh-keygen; then
+    log "ssh-keygen not available; skipping GitHub SSH setup."
+    return
+  fi
+
+  mkdir -p "$HOME/.ssh"
+  chmod 700 "$HOME/.ssh"
+
+  if [ ! -f "$ssh_key" ] || [ ! -f "$ssh_pub_key" ]; then
+    key_title="${USER}@$(hostname)-dotfiles"
+    log "Generating SSH key at $ssh_key..."
+    ssh-keygen -t ed25519 -C "$key_title" -f "$ssh_key" -N ""
+  fi
+
+  chmod 600 "$ssh_key"
+  chmod 644 "$ssh_pub_key"
+
+  if ! command_exists gh; then
+    log "GitHub CLI (gh) not available; cannot upload SSH key automatically."
+    return
+  fi
+
+  if ! gh auth status -h github.com >/dev/null 2>&1; then
+    log "GitHub CLI is not authenticated. Run 'gh auth login', then rerun setup to upload SSH key."
+    return
+  fi
+
+  pub_key_material="$(awk '{print $2}' "$ssh_pub_key")"
+  if [ -z "$pub_key_material" ]; then
+    log "Could not read SSH public key material from $ssh_pub_key."
+    return
+  fi
+
+  if gh api user/keys --paginate --jq '.[].key' 2>/dev/null | grep -qxF "$pub_key_material"; then
+    log "SSH public key already present on GitHub."
+  else
+    key_title="$(hostname)-$(date +%Y-%m-%d)-dotfiles"
+    log "Uploading SSH public key to GitHub..."
+    gh ssh-key add "$ssh_pub_key" --title "$key_title"
+  fi
+
+  current_origin="$(git -C "$DOTFILES_DIR" remote get-url origin 2>/dev/null || true)"
+  if [ "$current_origin" != "$desired_origin" ]; then
+    log "Switching dotfiles remote to SSH..."
+    git -C "$DOTFILES_DIR" remote set-url origin "$desired_origin"
+  fi
+}
+
 section "Starting Linux setup"
 
 log "Checking for git..."
@@ -136,6 +215,8 @@ if ! command_exists gh; then
   sudo apt install -y gh
 fi
 
+ensure_github_ssh_access
+
 # Check for npx (Node.js) before using cowsay
 if ! command_exists npx; then
   log "Installing Node.js (for npx)..."
@@ -164,6 +245,13 @@ if [ -d "$DOTFILES_DIR/.git" ]; then
   fi
 else
   verify_fail "dotfiles repo missing"
+fi
+
+dotfiles_origin="$(git -C "$DOTFILES_DIR" remote get-url origin 2>/dev/null || true)"
+if [ "$dotfiles_origin" = "git@github.com:nimrossum/dotfiles.git" ]; then
+  verify_pass "dotfiles origin uses SSH"
+else
+  verify_fail "dotfiles origin is not SSH"
 fi
 
 # Check symlinks

@@ -17,6 +17,7 @@
 	please = push --force-with-lease
 	unstage = reset HEAD --
 	pr = pull --rebase
+	pop = stash pop
 [pull]
 	ff = only
 

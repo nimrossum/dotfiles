@@ -111,6 +111,7 @@ mkdir -p "$HOME/.config"
 ln -sf "$DOTFILES_DIR/linux/zsh/zshrc" "$HOME/.zshrc"
 ln -sf "$DOTFILES_DIR/linux/zsh/pr_prompt.sh" "$HOME/.config/pr_prompt.sh"
 ln -sf "$DOTFILES_DIR/git/gitconfig" "$HOME/.gitconfig"
+ln -sf "$DOTFILES_DIR/linux/shell/hushlogin" "$HOME/.hushlogin"
 # Optionally symlink .bashrc if desired
 ln -sf "$DOTFILES_DIR/linux/bash/bashrc" "$HOME/.bashrc"
 
@@ -178,6 +179,7 @@ check_symlink "$HOME/.zshrc" "$DOTFILES_DIR/linux/zsh/zshrc"
 check_symlink "$HOME/.config/pr_prompt.sh" "$DOTFILES_DIR/linux/zsh/pr_prompt.sh"
 check_symlink "$HOME/.gitconfig" "$DOTFILES_DIR/git/gitconfig"
 check_symlink "$HOME/.bashrc" "$DOTFILES_DIR/linux/bash/bashrc"
+check_symlink "$HOME/.hushlogin" "$DOTFILES_DIR/linux/shell/hushlogin"
 
 if command_exists zsh; then
   zsh_path="$(command -v zsh)"

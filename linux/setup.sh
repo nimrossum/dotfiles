@@ -63,17 +63,8 @@ ensure_zsh_default_shell() {
     log "zsh is not available, so the default login shell cannot be changed."
   elif [ "$current_shell" = "$zsh_path" ]; then
     log "Default login shell is already zsh."
-  elif [ ! -t 0 ] || [ ! -t 1 ]; then
-    log "Default login shell is not zsh. Run manually: chsh -s $zsh_path"
-  elif command_exists chsh; then
-    log "Setting default login shell to $zsh_path..."
-    if chsh -s "$zsh_path" "$USER"; then
-      log "Default login shell updated to zsh."
-    else
-      log "Could not change default shell automatically. Run: chsh -s $zsh_path"
-    fi
   else
-    log "chsh not available. Run manually: chsh -s $zsh_path"
+    log "Default login shell is not zsh. Run manually: chsh -s $zsh_path"
   fi
 }
 
@@ -278,7 +269,7 @@ if command_exists zsh; then
   if [ "$login_shell" = "$zsh_path" ]; then
     verify_pass "default shell is zsh"
   else
-    verify_fail "default shell is not zsh"
+    log "default shell is not zsh yet; interactive terminals still launch zsh after setup"
   fi
 else
   verify_fail "zsh missing; cannot verify default shell"

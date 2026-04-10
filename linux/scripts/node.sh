@@ -1,8 +1,13 @@
 # Bun
-curl -fsSL https://bun.sh/install | bash
+export BUN_INSTALL="${BUN_INSTALL:-$HOME/.bun}"
+if [ ! -x "$BUN_INSTALL/bin/bun" ]; then
+	tmp_bun_install="$(mktemp)"
+	curl -fsSL https://bun.sh/install -o "$tmp_bun_install"
+	bash "$tmp_bun_install"
+	rm -f "$tmp_bun_install"
+fi
 
 # Load Bun in the current shell so setup verification can detect it.
-export BUN_INSTALL="$HOME/.bun"
 if [ -d "$BUN_INSTALL/bin" ]; then
 	export PATH="$BUN_INSTALL/bin:$PATH"
 fi

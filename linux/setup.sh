@@ -59,17 +59,21 @@ ensure_zsh_default_shell() {
   zsh_path="$(command -v zsh)"
   current_shell="$(getent passwd "$USER" | cut -d: -f7)"
 
-  if [ -n "$zsh_path" ] && [ "$current_shell" != "$zsh_path" ]; then
+  if [ -z "$zsh_path" ]; then
+    log "zsh is not available, so the default login shell cannot be changed."
+  elif [ "$current_shell" = "$zsh_path" ]; then
+    log "Default login shell is already zsh."
+  elif [ ! -t 0 ] || [ ! -t 1 ]; then
+    log "Default login shell is not zsh. Run manually: chsh -s $zsh_path"
+  elif command_exists chsh; then
     log "Setting default login shell to $zsh_path..."
-    if command_exists chsh; then
-      if chsh -s "$zsh_path" "$USER"; then
-        log "Default login shell updated to zsh."
-      else
-        log "Could not change default shell automatically. Run: chsh -s $zsh_path"
-      fi
+    if chsh -s "$zsh_path" "$USER"; then
+      log "Default login shell updated to zsh."
     else
-      log "chsh not available. Run manually: chsh -s $zsh_path"
+      log "Could not change default shell automatically. Run: chsh -s $zsh_path"
     fi
+  else
+    log "chsh not available. Run manually: chsh -s $zsh_path"
   fi
 }
 
@@ -191,10 +195,9 @@ ln -sf "$DOTFILES_DIR/linux/zsh/zshrc" "$HOME/.zshrc"
 ln -sf "$DOTFILES_DIR/linux/zsh/pr_prompt.sh" "$HOME/.config/pr_prompt.sh"
 ln -sf "$DOTFILES_DIR/git/gitconfig" "$HOME/.gitconfig"
 ln -sf "$DOTFILES_DIR/linux/shell/hushlogin" "$HOME/.hushlogin"
-# Optionally symlink .bashrc if desired
 ln -sf "$DOTFILES_DIR/linux/bash/bashrc" "$HOME/.bashrc"
 
-log "Open a new terminal or run 'source ~/.bashrc' to load shell changes."
+log "Open a new terminal to use zsh as your login shell."
 
 section "Installing packages"
 source "$DOTFILES_DIR/linux/scripts/packages.sh"

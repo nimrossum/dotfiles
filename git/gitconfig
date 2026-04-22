@@ -1,3 +1,5 @@
+[core]
+	editor = code --wait
 [user]
 	name = Jonas Nim Røssum
 	email = 1959615+nimrossum@users.noreply.github.com
@@ -20,4 +22,3 @@
 	pop = stash pop
 [pull]
 	ff = only
-

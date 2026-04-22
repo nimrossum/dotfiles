@@ -1,3 +1,6 @@
+# user-local executables (e.g. fallback installs like just)
+export PATH="$HOME/.local/bin:$PATH"
+
 # Launch zsh if installed
 if [ -t 1 ] && command -v zsh >/dev/null 2>&1; then
     exec zsh

@@ -19,7 +19,7 @@ curl -sL https://raw.githubusercontent.com/nimrossum/dotfiles/refs/heads/main/li
 - **nvm** – Node Version Manager
 - **node** – latest Node.js (via nvm)
 
-- **just** – command runner
+- **just** – command runner (via apt when available, otherwise installed to `~/.local/bin`)
 - **neofetch** – system info display in terminal
 
 ## Shell behavior

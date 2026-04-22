@@ -64,7 +64,16 @@ ensure_zsh_default_shell() {
   elif [ "$current_shell" = "$zsh_path" ]; then
     log "Default login shell is already zsh."
   else
-    log "Default login shell is not zsh. Run manually: chsh -s $zsh_path"
+    if command_exists chsh; then
+      log "Changing default login shell to zsh..."
+      if chsh -s "$zsh_path"; then
+        log "Default login shell changed to zsh."
+      else
+        log "Could not change default shell automatically. Run manually: chsh -s $zsh_path"
+      fi
+    else
+      log "Default login shell is not zsh. Run manually: chsh -s $zsh_path"
+    fi
   fi
 }
 

@@ -13,6 +13,9 @@
 	br = branch
 	cm = commit -m
 	ca = commit --amend
+	cf = commit --fixup
+	fix = commit --fixup
+	fixup = commit --fixup
 	amend = commit --amend --no-edit
 	cp = cherry-pick
 	lg = log --oneline --graph --decorate --all

@@ -117,11 +117,38 @@ ensure_github_ssh_access() {
   local pub_key_material
   local key_title
   local current_origin
+  local first_remote
   local desired_origin
 
   ssh_key="$HOME/.ssh/id_ed25519"
   ssh_pub_key="$ssh_key.pub"
   desired_origin="git@github.com:nimrossum/dotfiles.git"
+
+  # Always prefer SSH for the dotfiles remote, even if gh auth is not ready yet.
+  if git -C "$DOTFILES_DIR" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    if git -C "$DOTFILES_DIR" remote | grep -qx "origin"; then
+      current_origin="$(git -C "$DOTFILES_DIR" remote get-url origin 2>/dev/null || true)"
+      if [ "$current_origin" != "$desired_origin" ]; then
+        log "Switching dotfiles remote to SSH..."
+        git -C "$DOTFILES_DIR" remote set-url origin "$desired_origin"
+      fi
+      git -C "$DOTFILES_DIR" remote set-url --push origin "$desired_origin" >/dev/null 2>&1 || true
+    else
+      first_remote="$(git -C "$DOTFILES_DIR" remote | head -n 1)"
+      if [ -n "$first_remote" ]; then
+        log "Renaming '$first_remote' to 'origin' and switching to SSH..."
+        git -C "$DOTFILES_DIR" remote rename "$first_remote" origin
+        git -C "$DOTFILES_DIR" remote set-url origin "$desired_origin"
+        git -C "$DOTFILES_DIR" remote set-url --push origin "$desired_origin" >/dev/null 2>&1 || true
+      else
+        log "Adding dotfiles origin remote (SSH)..."
+        git -C "$DOTFILES_DIR" remote add origin "$desired_origin"
+      fi
+    fi
+
+    current_origin="$(git -C "$DOTFILES_DIR" remote get-url origin 2>/dev/null || true)"
+    log "dotfiles origin is now: $current_origin"
+  fi
 
   ensure_openssh_client
 
@@ -166,11 +193,6 @@ ensure_github_ssh_access() {
     gh ssh-key add "$ssh_pub_key" --title "$key_title"
   fi
 
-  current_origin="$(git -C "$DOTFILES_DIR" remote get-url origin 2>/dev/null || true)"
-  if [ "$current_origin" != "$desired_origin" ]; then
-    log "Switching dotfiles remote to SSH..."
-    git -C "$DOTFILES_DIR" remote set-url origin "$desired_origin"
-  fi
 }
 
 section "Starting Linux setup"
@@ -251,7 +273,7 @@ else
 fi
 
 dotfiles_origin="$(git -C "$DOTFILES_DIR" remote get-url origin 2>/dev/null || true)"
-if [ "$dotfiles_origin" = "git@github.com:nimrossum/dotfiles.git" ]; then
+if printf '%s' "$dotfiles_origin" | grep -Eq '^(git@github\.com:nimrossum/dotfiles(\.git)?|ssh://git@github\.com/nimrossum/dotfiles(\.git)?)$'; then
   verify_pass "dotfiles origin uses SSH"
 else
   verify_fail "dotfiles origin is not SSH"

@@ -25,3 +25,6 @@
 	pop = stash pop
 [pull]
 	ff = only
+
+[credential]
+ 	helper = store

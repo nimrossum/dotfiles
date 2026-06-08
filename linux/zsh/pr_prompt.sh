@@ -21,8 +21,6 @@ parse_pr() {
     pr=$(gh pr view --json number --jq '.number' 2>/dev/null)
     if [ -n "$pr" ]; then
       echo "#${pr}"
-    else
-      echo "#-"
     fi
   fi
 }
@@ -87,6 +85,10 @@ parse_repo_line() {
     branch=$(parse_git)
     pr=$(parse_pr)
     repo_state=$(parse_git_status)
-    echo " ${branch} ${pr} ${repo_state}"
+    if [ -n "$pr" ]; then
+      echo " %F{magenta}${branch}%f %F{cyan}${pr}%f %F{244}${repo_state}%f"
+    else
+      echo " %F{magenta}${branch}%f %F{244}${repo_state}%f"
+    fi
   fi
 }

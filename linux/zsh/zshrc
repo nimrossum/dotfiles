@@ -35,3 +35,6 @@ export PATH="$HOME/.local/bin:$PATH"
 PROMPT='%F{245}%~%f$(parse_repo_line)
 %(?.%F{green}λ.%F{red}λ)%f '
 
+
+# Vite+ bin (https://viteplus.dev)
+. "$HOME/.vite-plus/env"

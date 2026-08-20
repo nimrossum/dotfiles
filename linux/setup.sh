@@ -225,6 +225,7 @@ section "Installing packages"
 source "$DOTFILES_DIR/linux/scripts/packages.sh"
 ensure_libatomic_runtime
 source "$DOTFILES_DIR/linux/scripts/node.sh"
+source "$DOTFILES_DIR/linux/scripts/vite-plus.sh"
 
 # Ensure Bun is visible to this process before verification checks.
 export BUN_INSTALL="$HOME/.bun"
@@ -252,7 +253,7 @@ fi
 
 section "Verifying setup"
 
-for cmd in git gh nvm node npx just bun zsh neofetch; do
+for cmd in git gh nvm node npx just bun vp zsh neofetch; do
   if command_exists "$cmd"; then
     verify_pass "$cmd installed"
   else

@@ -18,3 +18,6 @@ export NVM_DIR="$HOME/.nvm"
 # copilot
 export COPILOT_INSTALL="$HOME/.local/bin/copilot"
 export PATH="$COPILOT_INSTALL:$PATH"
+
+# Vite+ bin (https://viteplus.dev)
+. "$HOME/.vite-plus/env"

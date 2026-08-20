@@ -9,6 +9,9 @@ choco upgrade googlechrome firefox
 # Development
 choco upgrade nvm vscode cascadiacode gh
 
+# Vite Plus
+irm https://vite.plus/ps1 | iex
+
 # PowerShell
 choco upgrade powershell-core
 

@@ -1,5 +1,18 @@
 sudo apt update
-sudo apt install -y unzip git curl tar libatomic1 neofetch zsh
+sudo apt install -y unzip git curl tar libatomic1 zsh
+
+SYSTEM_INFO_CMD=""
+for system_info_pkg in fastfetch neofetch; do
+	if sudo apt install -y "$system_info_pkg"; then
+		SYSTEM_INFO_CMD="$system_info_pkg"
+		break
+	fi
+	echo "[dotfiles] optional package '$system_info_pkg' unavailable; trying next option"
+done
+
+if [ -z "$SYSTEM_INFO_CMD" ]; then
+	echo "[dotfiles] no optional system info package installed (fastfetch/neofetch unavailable)"
+fi
 
 # Install `just` (command runner) https://github.com/casey/just
 if sudo apt install -y just; then

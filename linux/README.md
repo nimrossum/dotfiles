@@ -20,7 +20,7 @@ curl -sL https://raw.githubusercontent.com/nimrossum/dotfiles/refs/heads/main/li
 - **node** – latest Node.js (via nvm)
 
 - **just** – command runner (via apt when available, otherwise installed to `~/.local/bin`)
-- **neofetch** – system info display in terminal
+- **fastfetch** (preferred) or **neofetch** (fallback when available) – optional system info display in terminal
 
 ## Shell behavior
 

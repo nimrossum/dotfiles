@@ -253,13 +253,27 @@ fi
 
 section "Verifying setup"
 
-for cmd in git gh nvm node npx just bun vp zsh neofetch; do
+for cmd in git gh nvm node npx just bun vp zsh; do
   if command_exists "$cmd"; then
     verify_pass "$cmd installed"
   else
     verify_fail "$cmd missing"
   fi
 done
+
+if [ -n "${SYSTEM_INFO_CMD:-}" ]; then
+  if command_exists "$SYSTEM_INFO_CMD"; then
+    verify_pass "$SYSTEM_INFO_CMD installed"
+  else
+    verify_fail "$SYSTEM_INFO_CMD missing"
+  fi
+elif command_exists fastfetch; then
+  verify_pass "fastfetch installed"
+elif command_exists neofetch; then
+  verify_pass "neofetch installed"
+else
+  verify_pass "system info tool skipped (fastfetch/neofetch unavailable)"
+fi
 
 # Check dotfiles repo
 if [ -d "$DOTFILES_DIR/.git" ]; then

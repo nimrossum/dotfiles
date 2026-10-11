@@ -223,6 +223,7 @@ log "Open a new terminal to use zsh as your login shell."
 
 section "Installing packages"
 source "$DOTFILES_DIR/linux/scripts/packages.sh"
+source "$DOTFILES_DIR/linux/scripts/neovim.sh"
 ensure_libatomic_runtime
 source "$DOTFILES_DIR/linux/scripts/node.sh"
 source "$DOTFILES_DIR/linux/scripts/vite-plus.sh"
@@ -253,7 +254,7 @@ fi
 
 section "Verifying setup"
 
-for cmd in git gh nvm node npx just bun vp zsh; do
+for cmd in git gh nvm node npx just bun vp zsh nvim; do
   if command_exists "$cmd"; then
     verify_pass "$cmd installed"
   else

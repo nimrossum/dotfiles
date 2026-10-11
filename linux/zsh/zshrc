@@ -31,6 +31,12 @@ export NVM_DIR="$HOME/.nvm"
 # user-local executables (e.g. fallback installs like just)
 export PATH="$HOME/.local/bin:$PATH"
 
+# neovim
+case ":$PATH:" in
+	*":/opt/nvim-linux-x86_64/bin:"*) ;;
+	*) export PATH="$PATH:/opt/nvim-linux-x86_64/bin" ;;
+esac
+
 # Prompt
 PROMPT='%F{245}%~%f$(parse_repo_line)
 %(?.%F{green}λ.%F{red}λ)%f '

@@ -10,5 +10,7 @@ if (Test-Path "$env:NVM_DIR\nvm.ps1") {
     & "$env:NVM_DIR\nvm.ps1"
 }
 
+New-Alias grep findstr
+
 # Git credentials and config via symlinked gitconfig
 # (Git config is in dotfiles/git/gitconfig)
